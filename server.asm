@@ -8,6 +8,8 @@ accept = 43
 read = 0
 write = 1
 open = 2
+exit = 60
+close = 3
 af_inet = 2
 sock_stream = 1
 o_rdonly = 0
@@ -32,6 +34,8 @@ mov rsi, 10
 mov rax, listen
 syscall
 
+accept_loop:
+
 mov rdi, r12
 mov rsi, 0
 mov rdx, 0
@@ -50,6 +54,8 @@ mov rsi, o_rdonly
 mov rax, open
 syscall
 
+mov r14, rax ; save index.html fd
+
 mov rdi, rax
 mov rsi, buffer2
 mov rdx, 256
@@ -60,6 +66,20 @@ mov rdi, r13
 mov rsi, buffer2
 mov rdx, 256
 mov rax, write
+syscall
+
+mov rdi, r13
+mov rax, close
+syscall
+
+mov rdi, r14
+mov rax, close
+syscall
+
+jmp accept_loop
+
+mov rdi, 0
+mov rax, exit
 syscall
 
 section '.data' writeable
